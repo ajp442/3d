@@ -1,27 +1,57 @@
 $fn=50;
 
+m_wall_thickness = 0.08;
+e = 0.0001;
 
-spoonShape(4.5, 7.3, 20, 4, 1);
+m_scoop_width = 4.5;
+m_scoop_length = 7.3;
+m_handle_length = 12.5;
+m_handle_base_width = 2;
+m_handle_neck_width = 0.9;
 
-module spoonShape(scoop_width, scoop_length, handle_length, handle_base_width, handle_neck_width)
+m_box_length = (m_handle_length + m_scoop_length) + (m_wall_thickness*2);
+m_box_width = m_scoop_width + m_wall_thickness*2;
+m_box_height = 3;
+
+
+difference(){
+    translate([(-m_scoop_width/2)-m_wall_thickness, -m_scoop_length-m_wall_thickness, 0])
+        cube([m_box_width, m_box_length, m_box_height]);
+
+    translate([0,0,m_wall_thickness])
+    {
+        linear_extrude(m_box_height,center=false,convexity=4,twist=false)
+        {
+            spoonShape(m_scoop_width, m_scoop_length, m_handle_length, m_handle_base_width, m_handle_neck_width);
+        }
+    }
+
+    // Inner box, a place to grab the utencil.
+    translate([(-m_scoop_width/2), m_handle_length/6, m_wall_thickness])
+        cube([m_box_width-(2*m_wall_thickness), m_handle_length*(0.6), m_box_height]);
+}
+
+module spoonShape(p_scoop_width, p_scoop_length, handle_length, handle_base_width, handle_neck_width)
 {
+    // The user will enter diameter measurements, we use radius measurements in this code;
+    scoop_width = p_scoop_width/2;
+    scoop_length = p_scoop_length/2;
+
     scoop_diameter_scale = (scoop_length/scoop_width);
-%    translate([0,-scoop_length,0])
-   {
-       scale([1.0,scoop_diameter_scale,1.0])
-      {
-          circle(scoop_width);
-      }
-   }
-    
-    k = handle_neck_width;
-    u = handle_length;
-    x = handle_base_width;
-    
-    extension = (k*u)/(x-k);
-    //extension = ((handle_neck_width))*(handle_length/(handle_base_width));
-    //#polygon([[0,-extension], [(handle_base_width/2.0), handle_length], [-(handle_base_width/2.0), handle_length]]);
-    %polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], ([0, -extension])]);
+    translate([0,-scoop_length,0])
+    {
+        scale([1.0,scoop_diameter_scale,1.0])
+        {
+            circle(scoop_width);
+        }
+    }
+
+    // How far to extend the triangle in order to get the correct neck_width.
+    extension = (handle_neck_width*handle_length)/(handle_base_width-handle_neck_width);
+    difference(){
+        polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], ([0, -extension])]);
+        polygon([[((handle_neck_width+e)/2.0), -0.1], [(-(handle_neck_width+e)/2.0), -0.1], ([0, -extension-e])]);
+    }
 }
 
 // Ultimaker 2 build volume

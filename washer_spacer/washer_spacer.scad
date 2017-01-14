@@ -1,7 +1,7 @@
 
-inner_diameter = 3;
+inner_diameter = 3.5;
 outer_diameter = 5;
-washer_height = 3;
+washer_height = 2.5;
 e=.01;
 ee=.005;
 

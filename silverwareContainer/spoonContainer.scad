@@ -1,12 +1,11 @@
-$fn=50;
+$fn=500;
 
-m_wall_thickness = 0.08;
-e = 0.0001;
+m_wall_thickness = 0.16;
 
 m_scoop_width = 4.5;
 m_scoop_length = 7.3;
 m_handle_length = 12.5;
-m_handle_base_width = 2;
+m_handle_base_width = 2.5;
 m_handle_neck_width = 0.9;
 
 m_box_length = (m_handle_length + m_scoop_length) + (m_wall_thickness*2);
@@ -31,12 +30,21 @@ difference(){
         cube([m_box_width-(2*m_wall_thickness), m_handle_length*(0.6), m_box_height]);
 }
 
+e = 0.0001;
+m_scoop_width = 4.5;
+m_scoop_length = 7.3;
+m_handle_length = 12.5;
+m_handle_base_width = 2;
+m_handle_neck_width = 0.9;
+spoonShape(m_scoop_width, m_scoop_length, m_handle_length, m_handle_base_width, m_handle_neck_width);
+
 module spoonShape(p_scoop_width, p_scoop_length, handle_length, handle_base_width, handle_neck_width)
 {
     // The user will enter diameter measurements, we use radius measurements in this code;
     scoop_width = p_scoop_width/2;
     scoop_length = p_scoop_length/2;
 
+    // The scoop: an oval to approximate the shape of the scoop.
     scoop_diameter_scale = (scoop_length/scoop_width);
     translate([0,-scoop_length,0])
     {
@@ -46,8 +54,19 @@ module spoonShape(p_scoop_width, p_scoop_length, handle_length, handle_base_widt
         }
     }
 
+    // This is for the case if you have a long spoon with a narow handle_base_width,
+    // and a shorter spoon with a wider handle_base_width. If you enter the max measurements
+    // for each spoon, the short spoon would not fit because the base starts to taper.
+    // This prevents the base from tapering untill later on.
+    d = handle_length/2;
+    translate([-handle_base_width/2, handle_length-d, 0])
+    square([handle_base_width, d], center=false);
+
+    // The handle: A quadralateral (in this case, a triangle with the top part chopped off).
+    // Note to self. Now that I think about it, a quadrilateral would have been much esier.
     // How far to extend the triangle in order to get the correct neck_width.
     extension = (handle_neck_width*handle_length)/(handle_base_width-handle_neck_width);
+    // Discard anything that goes past the handle.
     difference(){
         polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], ([0, -extension])]);
         polygon([[((handle_neck_width+e)/2.0), -0.1], [(-(handle_neck_width+e)/2.0), -0.1], ([0, -extension-e])]);

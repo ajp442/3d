@@ -1,56 +1,130 @@
 $fn=500;
-
-m_wall_thickness = 0.16;
-
-m_scoop_width = 4.5;
-m_scoop_length = 7.3;
-m_handle_length = 12.5;
-m_handle_base_width = 2.5;
-m_handle_neck_width = 0.9;
-
-m_box_length = (m_handle_length + m_scoop_length) + (m_wall_thickness*2);
-m_box_width = m_scoop_width + m_wall_thickness*2;
-m_box_height = 3;
+e = 0.001;
 
 
-difference(){
-    translate([(-m_scoop_width/2)-m_wall_thickness, -m_scoop_length-m_wall_thickness, 0])
-        cube([m_box_width, m_box_length, m_box_height]);
+// All Silverware containers.
+m_container_height = 55;
+m_neck_percent = 0.05;
+m_base_percent = 0.2;
+m_wall_thickness = 0.8;
 
-    translate([0,0,m_wall_thickness])
-    {
-        linear_extrude(m_box_height,center=false,convexity=4,twist=false)
-        {
-            spoonShape(m_scoop_width, m_scoop_length, m_handle_length, m_handle_base_width, m_handle_neck_width);
+// Large Spoons
+largeSpoon_handle_neck_width = 9;
+largeSpoon_handle_base_width = 22;
+largeSpoon_scoop_width = 45;
+largeSpoon_scoop_length = 73;
+largeSpoon_handle_length = 125;
+//spoonContainer(largeSpoon_scoop_width, largeSpoon_scoop_length, largeSpoon_handle_length, largeSpoon_handle_base_width, largeSpoon_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+
+// Medium Spoons
+mediumSpoon_handle_neck_width = 6;
+mediumSpoon_handle_base_width = 21;
+mediumSpoon_scoop_width = 36;
+mediumSpoon_scoop_length = 56;
+mediumSpoon_handle_length = 110;
+//spoonContainer(mediumSpoon_scoop_width, mediumSpoon_scoop_length, mediumSpoon_handle_length, mediumSpoon_handle_base_width, mediumSpoon_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+
+// Small Spoons
+smallSpoon_handle_neck_width = 5;
+smallSpoon_handle_base_width = 13;
+smallSpoon_scoop_width = 29;
+smallSpoon_scoop_length = 45.8;
+smallSpoon_handle_length = 90;
+//spoonContainer(smallSpoon_scoop_width, smallSpoon_scoop_length, smallSpoon_handle_length, smallSpoon_handle_base_width, smallSpoon_handle_neck_width, m_container_height/4, m_wall_thickness, m_neck_percent, m_base_percent);
+
+// Large Forks
+largeFork_handle_neck_width = 8;
+largeFork_handle_base_width = 24;
+largeFork_width = 27;
+largeFork_length = 73;
+largeFork_handle_length = 136;
+//forkContainer(largeFork_width, largeFork_length, largeFork_handle_length, largeFork_handle_base_width, largeFork_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+
+// Small Forks
+smallFork_handle_neck_width = 5;
+smallFork_handle_base_width = 13;
+smallFork_width = 21;
+smallFork_length = 50;
+smallFork_handle_length = 96;
+forkContainer(smallFork_width, smallFork_length, smallFork_handle_length, smallFork_handle_base_width, smallFork_handle_neck_width, m_container_height*0.4, m_wall_thickness, m_neck_percent, m_base_percent);
+
+
+
+
+
+//-----------------------------------------------------------------------------
+// The below code gives an idea of what the containers would look like inside
+// a drawr.
+//-----------------------------------------------------------------------------
+// Drawr width 25 cm.
+// drawr length 20 inch, 51 cm
+//drawr_width = 25;
+//drawr_height = 6;
+//drawr_length = 51;
+//difference() {
+//cube([drawr_width+2*m_wall_thickness, drawr_length+2*m_wall_thickness, drawr_height+2*m_wall_thickness]);
+//translate([m_wall_thickness, m_wall_thickness,m_wall_thickness*2])
+//cube([drawr_width, drawr_length, drawr_height]);
+//}
+//translate([m_wall_thickness, m_wall_thickness, m_wall_thickness])
+//{
+//    spoonContainer(largeSpoon_scoop_width, largeSpoon_scoop_length, largeSpoon_handle_length, largeSpoon_handle_base_width, largeSpoon_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+//
+//    translate([largeSpoon_scoop_width+2*m_wall_thickness,0,0]) {
+//        forkContainer(largeFork_width, largeFork_length, largeFork_handle_length, largeFork_handle_base_width, largeFork_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+//
+//
+//        translate([largeFork_width+2*m_wall_thickness,0,0]) {
+//            spoonContainer(mediumSpoon_scoop_width, mediumSpoon_scoop_length, mediumSpoon_handle_length, mediumSpoon_handle_base_width, mediumSpoon_handle_neck_width, m_container_height, m_wall_thickness, m_neck_percent, m_base_percent);
+//
+//        }
+//    }
+//}
+
+
+
+module spoonContainer(scoop_width_d, scoop_length_d, handle_length, handle_base_width, handle_neck_width, container_height, wall_thickness, neck_percent, base_percent)
+{
+    container_width = scoop_width_d + wall_thickness*2;
+    container_length = (handle_length + scoop_length_d) + (wall_thickness*2);
+
+    // Translate it so it start in "the corner", like a cube would if not centered.
+    translate([container_width/2, scoop_length_d+wall_thickness,0]) {
+        difference(){
+            translate([(-scoop_width_d/2)-wall_thickness, -scoop_length_d-wall_thickness, 0])
+                cube([container_width, container_length, container_height]);
+
+            translate([0,0,wall_thickness]) {
+                linear_extrude(container_height,center=false,convexity=4,twist=false) {
+                    spoonShape(scoop_width_d, scoop_length_d, handle_length, handle_base_width, handle_neck_width);
+                }
+            }
+
+            if ((neck_percent + base_percent) <= 1.0)
+            {
+                grab_box_length = handle_length*(1-(neck_percent + base_percent));
+                // Inner box, a place to grab the utencil.
+                translate([(-scoop_width_d/2), neck_percent*handle_length, wall_thickness])
+                    cube([container_width-(2*wall_thickness), grab_box_length, container_height]);
+            }
         }
     }
-
-    // Inner box, a place to grab the utencil.
-    translate([(-m_scoop_width/2), m_handle_length/6, m_wall_thickness])
-        cube([m_box_width-(2*m_wall_thickness), m_handle_length*(0.6), m_box_height]);
 }
 
-e = 0.0001;
-m_scoop_width = 4.5;
-m_scoop_length = 7.3;
-m_handle_length = 12.5;
-m_handle_base_width = 2;
-m_handle_neck_width = 0.9;
-spoonShape(m_scoop_width, m_scoop_length, m_handle_length, m_handle_base_width, m_handle_neck_width);
-
-module spoonShape(p_scoop_width, p_scoop_length, handle_length, handle_base_width, handle_neck_width)
+module spoonShape(scoop_width_d, scoop_length_d, handle_length, handle_base_width, handle_neck_width)
 {
+    margin = 1;
     // The user will enter diameter measurements, we use radius measurements in this code;
-    scoop_width = p_scoop_width/2;
-    scoop_length = p_scoop_length/2;
+    scoop_width_r = scoop_width_d/2;
+    scoop_length_r = scoop_length_d/2;
 
     // The scoop: an oval to approximate the shape of the scoop.
-    scoop_diameter_scale = (scoop_length/scoop_width);
-    translate([0,-scoop_length,0])
+    scoop_diameter_scale = (scoop_length_r/scoop_width_r);
+    translate([0,-scoop_length_r,0])
     {
         scale([1.0,scoop_diameter_scale,1.0])
         {
-            circle(scoop_width);
+            circle(scoop_width_r);
         }
     }
 
@@ -62,68 +136,54 @@ module spoonShape(p_scoop_width, p_scoop_length, handle_length, handle_base_widt
     translate([-handle_base_width/2, handle_length-d, 0])
     square([handle_base_width, d], center=false);
 
-    // The handle: A quadralateral (in this case, a triangle with the top part chopped off).
-    // Note to self. Now that I think about it, a quadrilateral would have been much esier.
-    // How far to extend the triangle in order to get the correct neck_width.
-    extension = (handle_neck_width*handle_length)/(handle_base_width-handle_neck_width);
-    // Discard anything that goes past the handle.
-    difference(){
-        polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], ([0, -extension])]);
-        polygon([[((handle_neck_width+e)/2.0), -0.1], [(-(handle_neck_width+e)/2.0), -0.1], ([0, -extension-e])]);
+    // Shape of the handle as a quadralatierall.
+    polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], [-(handle_neck_width/2), -margin], [handle_neck_width/2, -margin]]);
+}
+
+module forkContainer(fork_width, fork_length, handle_length, handle_base_width, handle_neck_width, container_height, wall_thickness, neck_percent, base_percent)
+{
+    container_width = fork_width + wall_thickness*2;
+    container_length = (handle_length + fork_length) + (wall_thickness*2);
+
+    translate([container_width/2, fork_length+wall_thickness,0]) {
+        difference(){
+            translate([-(fork_width/2)-wall_thickness, -fork_length-wall_thickness, 0])
+                cube([container_width, container_length, container_height]);
+
+            translate([0,0,wall_thickness]) {
+                linear_extrude(container_height,center=false,convexity=4,twist=false) {
+                    forkShape(fork_width, fork_length, handle_length, handle_base_width, handle_neck_width);
+                }
+            }
+
+            if ((neck_percent + base_percent) <= 1.0)
+            {
+                grab_box_length = handle_length*(1-(neck_percent + base_percent));
+                // Inner box, a place to grab the utencil.
+                translate([(-fork_width/2), neck_percent*handle_length, wall_thickness])
+                    cube([container_width-(2*wall_thickness), grab_box_length, container_height]);
+            }
+        }
     }
+}
+module forkShape(fork_width, fork_length, handle_length, handle_base_width, handle_neck_width)
+{
+    margin = 10;
+
+    translate([0,-fork_length/2,0])
+    square([fork_width, fork_length], true);
+
+    // This is for the case if you have a long spoon with a narow handle_base_width,
+    // and a shorter spoon with a wider handle_base_width. If you enter the max measurements
+    // for each spoon, the short spoon would not fit because the base starts to taper.
+    // This prevents the base from tapering untill later on.
+    d = handle_length/2;
+    translate([-handle_base_width/2, handle_length-d, 0])
+    square([handle_base_width, d], center=false);
+
+    // Shape of the handle as a quadralatierall.
+    polygon([[(handle_base_width/2.0), handle_length], [(-handle_base_width/2.0), handle_length], [-(handle_neck_width/2), -margin], [handle_neck_width/2, -margin]]);
 }
 
 // Ultimaker 2 build volume
 // 23 x 22.5 x 20.5cm
-// Width of drawr
-
-//item | width | height
-//drawr | 25.2 |
-//spoon | 4.3 | 19.7
-//fork | 2.2 | 
-//knife | | 23.4
-//$fn=50;
-//
-//rad = .5;
-//
-//wall_thickness = .16;
-//
-//spoon_diameter_width = 4.5;
-//spoon_diameter_length = 7.3;
-//spoon_handle_length = 12.7;
-//spoon_diameter_scale = (spoon_diameter_length/spoon_diameter_width);
-//s = v;
-//translate([0,-spoon_diameter_length,0]) {scale([1.0,spoon_diameter_scale,1.0]) circle(4.3);}
-//minkowski(){
-//circle(r=rad);
-//polygon([[0,-spoon_diameter_length-rad+5], [-1+rad, spoon_handle_length-rad], [1-rad, spoon_handle_length-rad]]);
-//}
-
-//color([.5, .5, .5, .5]) polygon([[0,-1], [3, 16], [-3, 16]]);
-
-// Spoon
-//sc_l = 20;
-//sc_w = 4.4;
-//sc_h = 5;
-//difference(){
-//cube([sc_l+wall_thickness*2, sc_w+wall_thickness*2, sc_h]);
-//    translate([wall_thickness,wall_thickness,wall_thickness]){
-//cube([sc_l, sc_w, sc_h]);
-//    }
-//}
-
-//////////////////////////////////////////////////////////////////////////////
-//kc_l = 22.8;
-//kc_w = 2.3;
-//kc_h = 5;
-//
-//wall_thickness = .16;
-
-//// Knife
-//difference(){
-//cube([kc_l+wall_thickness*2, kc_w+wall_thickness*2, kc_h]);
-//    translate([wall_thickness,wall_thickness,wall_thickness]){
-//cube([kc_l, kc_w, kc_h]);
-//    }
-//}
-//////////////////////////////////////////////////////////////////////////////

@@ -9,8 +9,9 @@ choose(i=object);
 
 //Choose which part to render (assembly is only for viewing)
 // [0:First Word Gear, 1:Second Word Gear, 2:Third Word Gear, 3:Fourth Word Gear,
-// 4:Center, 5:Small Gear, 6:Pin, 7:Plate, 8:Assembly, 9:Assemply without pins, 10 pins only]
-object=9;
+// 4:Center, 5:Small Gear, 6:Pin, 7:Plate, 8:Assembly, 9:Assemply without pins, 10 pins only,
+// 11 word corners]
+object=11;
 
 //Numbers of teeth on gears
 type=0;//[0:18 & 9,1:9 & 6,2:18 & 15]
@@ -19,7 +20,8 @@ type=0;//[0:18 & 9,1:9 & 6,2:18 & 15]
 Backlash=0.5;
 
 //Words on large gears.
-words = ["Star Trek", "starship",  "Enterprise", "Kirk", "Spock", "McCoy", "Data", "Klingon", "Vulcan",  "Gagh", "Ceti eel", "sehlat"];
+words = ["Tigers", "Football", "Lineman", "DI", "Band", "xBox One", "4-Wheeler", "Shooting", "SDSM&T", "Fjelstad", "Nathan", "Groton SD"];
+//words = ["Star Trek", "starship",  "Enterprise", "Kirk", "Spock", "McCoy", "Data", "Klingon", "Vulcan",  "Gagh", "Ceti eel", "sehlat"];
 //words = ["Raven", "Viper 4", "Slingshot", "Viper Pro", "E Pro", "SmarTrax", "Cruizer", "Hawkeye", "RTK", "Accuboom", "Multi-Hybrid", "Autoboom"];
 //words = ["hack", "the", "planet", "science", "math", "physics", "lisp", "C", "python", "encript", "sort", "search"];
 //words = ["corner_0", "corner_0", "corner_0", "corner_1", "corner_1", "corner_1", "corner_2", "corner_2", "corner_2", "corner_3", "corner_3", "corner_3"];
@@ -93,6 +95,11 @@ module choose(i=0){
 			translate([20*(j-0.5),-40,0])pinpeg();
 		}
 	}
+    else if(i==11){
+        for(j=[0:3]){
+            translate([40*(j-1.5),40*(j%2),0])rotate([0,0,10])gear1(words[j*3], words[(j*3)+1], words[(j*3)+2]);
+        }
+    }
 }
 
 module assembly()

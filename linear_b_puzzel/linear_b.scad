@@ -1,19 +1,23 @@
-// rename -n 's/(Linear_B_Syllable_)(.*$)/$2/' *.png
+
+characterImages = [["B013_ME.png", "B067_KI.png", "B050_PU.png", "B055_NU.png", "B058_SU.png"],
+                   ["B013_ME.png", "B050_PU.png", "B016_QA.png", "B058_SU.png", "B055_NU.png"],
+                   ["B044_KE.png", "B004_TE.png", "B055_NU.png", "B016_QA.png", "B013_ME.png"],
+                   ["B055_NU.png", "B052_NO.png", "B011_PO.png", "B006_NA.png", "B055_NU.png"],
+                   ["B053_RI.png", "B058_SU.png", "B009_SE.png", "B024_NE.png", "B044_KE.png"]];
+
+charScale = 0.9; // Edit this to make the character larger or smaller.
+
+imageSize = 50;
+
+spacingBetweenCubes = (imageSize/10);
 
 
-
-//characterImages = [[13, 67, 50, 55, 58],
-//                   [13, 50, 16, 58, 55],
-//                   [44, 04, 55, 16, 13],
-//                   [55, 52, 11, 06, 55],
-//                   [53, 58, 09, 24, 44]];
-
-container();
-translate([9,9,4])
-translate([(50*5 + 5*4)/2, (50*5 + 5*4)/2, 25])
-rotate([0,180,0])
-translate([-(50*5 + 5*4)/2, -(50*5 + 5*4)/2, -25])
-cubes();
+//container();
+//translate([9,9,4])
+//translate([(50*5 + 5*4)/2, (50*5 + 5*4)/2, 25])
+//rotate([0,180,0])
+//translate([-(50*5 + 5*4)/2, -(50*5 + 5*4)/2, -25])
+cubes(characterImages, imageSize, charScale, spacingBetweenCubes);
 
 
 
@@ -44,23 +48,15 @@ module container()
     
 }
 
-module cubes ()
+module cubes (images, imageSize, imageScale, spacingBetweenCubes)
 {
-    characterImages = [["B013_ME.png", "B067_KI.png", "B050_PU.png", "B055_NU.png", "B058_SU.png"],
-                       ["B013_ME.png", "B050_PU.png", "B016_QA.png", "B058_SU.png", "B055_NU.png"],
-                       ["B044_KE.png", "B004_TE.png", "B055_NU.png", "B016_QA.png", "B013_ME.png"],
-                       ["B055_NU.png", "B052_NO.png", "B011_PO.png", "B006_NA.png", "B055_NU.png"],
-                       ["B053_RI.png", "B058_SU.png", "B009_SE.png", "B024_NE.png", "B044_KE.png"]];
 
-    charScale = 0.9; // Edit this to make the character larger or smaller.
+    e = 0.1;
+    imageImpressionDepth = 1;
+    imageImpressionScale = imageImpressionDepth/100; // Calculated from range of surface scaling (0 to 100)
+    margin = (imageSize - (imageSize * imageScale))/2;
+    centerImageOnCube = [margin, margin, imageImpressionDepth-e];
 
-    imageSize = 50;
-
-    spacingBetweenCubes = (imageSize/10);
-
-    charTrans = (imageSize - (imageSize * charScale))/2;
-
-    echo (len(characterImages));
     for (i = [ 0 : len(characterImages)-1])
     {
         for (j = [ 0 : len(characterImages[i])-1])
@@ -68,12 +64,11 @@ module cubes ()
             translate([((imageSize*i) + (spacingBetweenCubes*i)),((imageSize*j) + (spacingBetweenCubes*j)),0]) {
                 difference() {
                     cube(imageSize);
-                    translate([charTrans,charTrans,.9])
-                        scale([charScale, charScale, 0.1])
+                    translate(centerImageOnCube)
+                        scale([imageScale, imageScale, imageImpressionScale])
                             surface(file = characterImages[i][j], invert = true);
                 }
             }
         }
     }
 }
-

@@ -11,12 +11,20 @@ imageSize = 50;
 
 spacingBetweenCubes = (imageSize/10);
 
-wallThickness = 4;
+wallThickness = 10;
 
 numRows = len(characterImages);
 numCols = len(characterImages[0]);
 
+e = 0.1;
+
+//liddedContainer(characterImages, imageSize, charScale, spacingBetweenCubes, wallThickness);
+
+
+//cubes(characterImages, imageSize, charScale, spacingBetweenCubes);
+
 // Getting things in the right place feels a little haky to me right now.
+
 container(characterImages, imageSize, charScale, spacingBetweenCubes, wallThickness);
 translate([spacingBetweenCubes + wallThickness,spacingBetweenCubes + wallThickness, wallThickness])
 	translate([(imageSize*numRows + (numRows-1)*spacingBetweenCubes)/2, (imageSize*numCols + (numCols-1)*spacingBetweenCubes)/2, imageSize/2])
@@ -24,6 +32,22 @@ translate([spacingBetweenCubes + wallThickness,spacingBetweenCubes + wallThickne
 			translate([-(imageSize*numRows + (numRows-1)*spacingBetweenCubes)/2, -(imageSize*numCols + (numCols-1)*spacingBetweenCubes)/2, -imageSize/2])
 				cubes(characterImages, imageSize, charScale, spacingBetweenCubes);
 
+
+module liddedContainer(images, imageSize, imageScale, spacingBetweenCubes, wallThickness)
+{
+	difference() {
+		container(characterImages, imageSize, charScale, spacingBetweenCubes, wallThickness);
+		translate([wallThickness/2,wallThickness/2,imageSize + 15])
+		lid(characterImages, imageSize, charScale, spacingBetweenCubes, wallThickness);
+	}
+}
+
+module lid(images, imageSize, imageScale, spacingBetweenCubes, wallThickness)
+{  
+	lidWidth = (imageSize * numRows) + (spacingBetweenCubes * (1 + numRows)) + wallThickness;
+	lidDepth = (imageSize * numRows) + (spacingBetweenCubes * (1 + numRows)) + 1.5*wallThickness + e;
+	cube([lidWidth, lidDepth, wallThickness]);
+}
 
 module container(images, imageSize, imageScale, spacingBetweenCubes, wallThickness)
 {
@@ -43,7 +67,6 @@ module container(images, imageSize, imageScale, spacingBetweenCubes, wallThickne
 
 module cubes (images, imageSize, imageScale, spacingBetweenCubes)
 {
-    e = 0.1;
     imageImpressionDepth = 1;
     imageImpressionScale = imageImpressionDepth/100; // Calculated from surface scaling range (0 to 100)
     margin = (imageSize - (imageSize * imageScale))/2;

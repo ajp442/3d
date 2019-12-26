@@ -70,7 +70,7 @@ module cubes (images, imageSize, imageScale, spacingBetweenCubes)
     imageImpressionDepth = 1;
     imageImpressionScale = imageImpressionDepth/100; // Calculated from surface scaling range (0 to 100)
     margin = (imageSize - (imageSize * imageScale))/2;
-    centerImageOnCube = [margin, margin, imageImpressionDepth-e];
+    centerImageOnCube = [margin, margin, -e];
 
     for (i = [ 0 : numRows-1])
     {
@@ -81,7 +81,7 @@ module cubes (images, imageSize, imageScale, spacingBetweenCubes)
                     cube(imageSize);
                     translate(centerImageOnCube)
                         scale([imageScale, imageScale, imageImpressionScale])
-                            surface(file = characterImages[i][j], invert = true);
+                            surface(file = images[i][j]);
                 }
             }
         }

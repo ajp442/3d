@@ -1,4 +1,3 @@
-
 $fn=50;
 
 m_gap=0.5;
@@ -56,9 +55,9 @@ module CanInsert(can_height, outer_can_diameter, inner_can_diameter, insert_heig
                 sphere(d=inner_sleve_diameter);
                 sphere(d=inner_sleve_diameter-2*wall_thickness);
                 // Drainage holes.
-                for(j=[-90:10:90])
+                for(j=[30:20:80])
                 {
-                    for(i=[-90:30:90])
+                    for(i=[0:40:360])
                     {
                         rotate([j,0,i]) {
                             translate([0,0,(inner_sleve_diameter/2)-wall_thickness-e])

@@ -1,16 +1,39 @@
-use <write/Write.scad>
+// use <write/Write.scad>
+
+//-----------------------------------------------------------------------
+// AAA Battery dimensions
+//-----------------------------------------------------------------------
+// From Wikipedia
+// length: 44.5 mm + 0.8 mm positive terminal button (45.3 mm total)
+// diameter: 10.5 mm
+//
+// My mesurements
+// length: 43.7 mm + 1.14 mm positive terminal button  (44.84 mm total)
+// diameter: 10.3 mm
+
+//-----------------------------------------------------------------------
+// AA Battery dimensions
+//-----------------------------------------------------------------------
+// From Wikipedia
+// length: 49.2–50.5 mm, including the button terminal
+// diameter: 13.5–14.5 mm 
+//
+// My measurements
+// length: 50.35 mm
+// diameter 14.1 mm
 
 // AA-14.6mm, AAA-10.7mm, 123A-16.9mm, CR2-15.6mm
-_1a_batteryDiameter = 14.6;
+_1a_batteryDiameter = 10.7;//14.6;
 
 // height of the battery recess (height of top and bottom piece should be equal to or slightly larger than the battery height)
-_1b_insideHeight = 12;
+//_1b_insideHeight = 12;
+_1b_insideHeight = 34;
 
 // number of batteries across
-_2a_columns = 2; // [1:50]
+_2a_columns = 4; // [1:50]
 
 // number of batteries deep
-_2b_rows = 2; // [1:50]
+_2b_rows = 4; // [1:50]
 
 // thickness of the sides
 _3a_walls = 0.8;
@@ -27,16 +50,16 @@ _4b_magnetDiameter = 3.1;
 _4c_magnetHeight = 3.1;
 
 // rendered on top of the lid or on the bottom of the base (you'll need to rotate the tray to see the text)
-_5a_labelText = "";
+//_5a_labelText = "";
 
 // font used to render the label
-_5b_labelFont = "write/orbitron.dxf"; // ["write/orbitron.dxf":Orbitron, "write/letters.dxf":Basic, "write/knewave.dxf":KneWave, "write/BlackRose.dxf":BlackRose, "write/braille.dxf":Braille]
+// _5b_labelFont = "write/orbitron.dxf"; // ["write/orbitron.dxf":Orbitron, "write/letters.dxf":Basic, "write/knewave.dxf":KneWave, "write/BlackRose.dxf":BlackRose, "write/braille.dxf":Braille]
 
 // depth of the label (negative values to emboss, positive values to extrude)
-_5c_labelDepth = -0.3;
+//_5c_labelDepth = -0.3;
 
 // height of the label in mm
-_5d_labelHeight = 8;
+//_5d_labelHeight = 8;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -134,7 +157,7 @@ module batteryGrid(diameter, height, rows, columns, mtype, mdiameter, mheight) {
 }
 
 
-module makeTray(diameter, height, rows, columns, wall, base, mtype, mdiameter, mheight, label, lfont, ldepth, lheight) {
+module makeTray(diameter, height, rows, columns, wall, base, mtype, mdiameter, mheight) {
 	eps = 0.1;
 	rounding = diameter/2 + wall;
 	width = diameter * columns + wall*2;
@@ -154,27 +177,25 @@ module makeTray(diameter, height, rows, columns, wall, base, mtype, mdiameter, m
 				batteryGrid(diameter, height+eps, rows, columns, mtype, mdiameter, mheight+eps);
 			}
 	
-			if (ldepth < 0) {
-				addLabel(label, (-ldepth+eps)/2 - eps, -ldepth+eps, lheight, lfont);
-			}
+			//if (ldepth < 0) {
+			//	addLabel(label, (-ldepth+eps)/2 - eps, -ldepth+eps, lheight, lfont);
+			//}
 		}
-		if (ldepth > 0) {
-			addLabel(label, -(ldepth+eps)/2 + eps, ldepth+eps, lheight, lfont);
-		}
+		//if (ldepth > 0) {
+		//	addLabel(label, -(ldepth+eps)/2 + eps, ldepth+eps, lheight, lfont);
+		//}
 	}
 }
 
-module addLabel(label, zoffset, depth, height, font) {
-	if (label != "") {
-		translate([0,0,zoffset])
-		mirror([0,1,0])
-		write(label, t=depth, h=height, font=font, space=1.2, center=true);
-	}
-}
+//module addLabel(label, zoffset, depth, height, font) {
+	//if (label != "") {
+		//translate([0,0,zoffset])
+		//mirror([0,1,0])
+		//write(label, t=depth, h=height, font=font, space=1.2, center=true);
+//	}
+//}
 
 makeTray(_1a_batteryDiameter, _1b_insideHeight, 
 			_2b_rows, _2a_columns, 
 			_3a_walls, _3b_base, 
-			_4a_magnetType, _4b_magnetDiameter, _4c_magnetHeight, 
-			_5a_labelText, _5b_labelFont, _5c_labelDepth, _5d_labelHeight,
-			$fn=90);
+			_4a_magnetType, _4b_magnetDiameter, _4c_magnetHeight, $fn=90);

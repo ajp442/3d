@@ -1,4 +1,4 @@
-// use <write/Write.scad>
+// Edited from https://www.thingiverse.com/thing:51376
 
 //-----------------------------------------------------------------------
 // AAA Battery dimensions
@@ -22,44 +22,54 @@
 // length: 50.35 mm
 // diameter 14.1 mm
 
-// AA-14.6mm, AAA-10.7mm, 123A-16.9mm, CR2-15.6mm
-_1a_batteryDiameter = 10.7;//14.6;
+battery_type = "AAA"; // ["AAA", "AA"]
+part = "base"; // ["base", "lid"]
+// How much of the case should we dedicate to being the lid?
+lid_percent = 26.0; // [0.0 : 50.0]
 
-// height of the battery recess (height of top and bottom piece should be equal to or slightly larger than the battery height)
-//_1b_insideHeight = 12;
-_1b_insideHeight = 34;
+// Number of batteries across
+columns = 4; // [1:10]
 
-// number of batteries across
-_2a_columns = 4; // [1:50]
+// Number of batteries deep
+rows = 4; // [1:10]
 
-// number of batteries deep
-_2b_rows = 4; // [1:50]
+module __Customizer_Limit__ () {}
+
+// Right now we only support "AAA" and "AA"
+// We add a little fudge to the battery height and diameter from 
+// what we measured, otherwise it is too tight for the batteries to fit.
+batteryDiameter = 10.7;
+batteryHeight = 46;
+if (battery_type == "AA")
+{
+    batteryDiameter = 14.6;
+    batteryHeight = 53;
+}
+
+// We will render either the "lid" or "base" depending on what is selected.
+insideHeight = batteryHeight * (1 - (lid_percent/100));
+if ("lid" == part)
+{
+    insideHeight = batteryHeight * (lid_percent/100);
+}
+
 
 // thickness of the sides
-_3a_walls = 0.8;
+wall_thickness = 0.8;
+
 
 // thickness of the bottom layer
-_3b_base = 0.8;
+base_thickness = 0.8;
 
 
 // magnet cutouts only appear if there are at least 2 x 2 batteries
-_4a_magnetType = "cylinder"; // [cylinder, cube]
+magnetType = "cylinder"; // [cylinder, cube]
 
-_4b_magnetDiameter = 3.1;
+magnetDiameter = 3.2;
 
-_4c_magnetHeight = 3.1;
+magnetHeight = 3.1;
 
-// rendered on top of the lid or on the bottom of the base (you'll need to rotate the tray to see the text)
-//_5a_labelText = "";
 
-// font used to render the label
-// _5b_labelFont = "write/orbitron.dxf"; // ["write/orbitron.dxf":Orbitron, "write/letters.dxf":Basic, "write/knewave.dxf":KneWave, "write/BlackRose.dxf":BlackRose, "write/braille.dxf":Braille]
-
-// depth of the label (negative values to emboss, positive values to extrude)
-//_5c_labelDepth = -0.3;
-
-// height of the label in mm
-//_5d_labelHeight = 8;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -91,8 +101,6 @@ module batteryGrid(diameter, height, rows, columns, mtype, mdiameter, mheight) {
 	r = diameter/2;
 	cut = 2*r*sin(angle);
 	tan = tan(angle);
-	filletCenter = r - r * tan;
-	filletCenter2 = r + r * tan;
 	filletOffset = r * tan;
 	filletRadius = r/cos(angle) - r;
 	xstart = ((columns-1) * diameter)/2;
@@ -176,26 +184,12 @@ module makeTray(diameter, height, rows, columns, wall, base, mtype, mdiameter, m
 			translate([0,0,height/2 + base]) {
 				batteryGrid(diameter, height+eps, rows, columns, mtype, mdiameter, mheight+eps);
 			}
-	
-			//if (ldepth < 0) {
-			//	addLabel(label, (-ldepth+eps)/2 - eps, -ldepth+eps, lheight, lfont);
-			//}
 		}
-		//if (ldepth > 0) {
-		//	addLabel(label, -(ldepth+eps)/2 + eps, ldepth+eps, lheight, lfont);
-		//}
 	}
 }
 
-//module addLabel(label, zoffset, depth, height, font) {
-	//if (label != "") {
-		//translate([0,0,zoffset])
-		//mirror([0,1,0])
-		//write(label, t=depth, h=height, font=font, space=1.2, center=true);
-//	}
-//}
 
-makeTray(_1a_batteryDiameter, _1b_insideHeight, 
-			_2b_rows, _2a_columns, 
-			_3a_walls, _3b_base, 
-			_4a_magnetType, _4b_magnetDiameter, _4c_magnetHeight, $fn=90);
+makeTray(batteryDiameter, insideHeight, 
+			rows, columns, 
+			wall_thickness, base_thickness, 
+			magnetType, magnetDiameter, magnetHeight, $fn=90);
